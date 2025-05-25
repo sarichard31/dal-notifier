@@ -1,51 +1,62 @@
 import os
-from stagehand import Browser
-from supabase import create_client
+import time
 from datetime import datetime
 from urllib.parse import urljoin
-import time
+from stagehand import Stagehand
+from supabase import create_client
 
-# Supabase config
+# Load environment variables
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_SERVICE_ROLE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY")
+BROWSERBASE_API_KEY = os.getenv("BROWSERBASE_API_KEY")
+BROWSERBASE_PROJECT_ID = os.getenv("BROWSERBASE_PROJECT_ID")
+
+# Initialize Supabase client
 supabase = create_client(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)
 
-# Base URL
+# Initialize Stagehand
+stagehand = Stagehand(
+    browserbase_api_key=BROWSERBASE_API_KEY,
+    browserbase_project_id=BROWSERBASE_PROJECT_ID,
+    model_name="gpt-4o"  # Adjust model if needed
+)
+
 BASE_URL = "https://www.health.ny.gov"
+DAL_PAGE_URL = f"{BASE_URL}/facilities/adult_care/dear_administrator_letters/"
 
-# Step 1: Use Browserbase to scrape 2025 DAL links
+# Scrape 2025 DAL links
 def scrape_2025_dal_links():
-    browser = Browser()
-    browser.goto("https://www.health.ny.gov/facilities/adult_care/dear_administrator_letters/")
-    browser.wait_for_selector("h2.expandable")
+    stagehand.page.goto(DAL_PAGE_URL)
+    stagehand.page.wait_for_selector("h2.expandable")
 
-    # Expand the 2025 section if collapsed
-    browser.click("h2.expandable.open:has-text('2025')")
+    # Make sure the 2025 section is expanded
+    header = stagehand.page.query_selector("h2.expandable.open:has-text('2025')")
+    if not header:
+        # Try to click it if not already open
+        header = stagehand.page.query_selector("h2.expandable:has-text('2025')")
+        if header:
+            header.click()
+            time.sleep(1)
 
-    # Wait for links to load
-    time.sleep(1)
-
-    # Grab all <a> links inside the 2025 section
-    links = browser.query_selector_all("h2:has-text('2025') + div li a")
+    # Select all links under the 2025 section
+    links = stagehand.page.query_selector_all("h2:has-text('2025') + div li a")
 
     results = []
     for link in links:
-        title = browser.get_text(link)
-        relative_url = browser.get_attribute(link, "href")
+        title = link.inner_text().strip()
+        relative_url = link.get_attribute("href").strip()
         full_url = urljoin(BASE_URL, relative_url)
         results.append({
-            "dal_title": title.strip(),
-            "dal_url": full_url.strip(),
+            "dal_title": title,
+            "dal_url": full_url,
             "updated_at": datetime.utcnow().isoformat()
         })
 
-    browser.close()
     return results
 
-# Step 2: Write to Supabase
+# Insert new DALs into Supabase
 def insert_dals_to_supabase(dals):
     for dal in dals:
-        # Avoid duplicates (optional: you can add constraints in Supabase too)
         existing = supabase.table("dal_tracker").select("*").eq("dal_url", dal["dal_url"]).execute()
         if not existing.data:
             print(f"📝 Inserting: {dal['dal_title']}")
@@ -53,7 +64,7 @@ def insert_dals_to_supabase(dals):
         else:
             print(f"⚠️ Already exists: {dal['dal_title']}")
 
-# Main flow
+# Main
 if __name__ == "__main__":
     print("🚀 Scraping 2025 Dear Administrator Letters...")
     dals = scrape_2025_dal_links()
