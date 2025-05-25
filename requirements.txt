@@ -13,3 +13,4 @@ browserbase
 supabase-py
 openai
 python-dotenv
+rich
