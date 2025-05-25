@@ -8,3 +8,8 @@ macholib @ file:///AppleInternal/Library/BuildRoots/bcce998f-ff34-11ef-9d34-f2a8
 requests==2.25.1
 six @ file:///AppleInternal/Library/BuildRoots/bcce998f-ff34-11ef-9d34-f2a857e00a32/Library/Caches/com.apple.xbs/Sources/python3/six-1.15.0-py2.py3-none-any.whl
 urllib3==1.26.4
+stagehand-py
+browserbase
+supabase-py
+openai
+python-dotenv
