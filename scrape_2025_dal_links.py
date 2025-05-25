@@ -26,20 +26,21 @@ DAL_PAGE_URL = f"{BASE_URL}/facilities/adult_care/dear_administrator_letters/"
 
 # Scrape 2025 DAL links
 def scrape_2025_dal_links():
-    stagehand.page.goto(DAL_PAGE_URL)
-    stagehand.page.wait_for_selector("h2.expandable")
+    page = stagehand.new_page()
+    page.goto(DAL_PAGE_URL)
+    page.wait_for_selector("h2.expandable")
 
     # Make sure the 2025 section is expanded
-    header = stagehand.page.query_selector("h2.expandable.open:has-text('2025')")
+    header = page.query_selector("h2.expandable.open:has-text('2025')")
     if not header:
         # Try to click it if not already open
-        header = stagehand.page.query_selector("h2.expandable:has-text('2025')")
+        header = page.query_selector("h2.expandable:has-text('2025')")
         if header:
             header.click()
             time.sleep(1)
 
     # Select all links under the 2025 section
-    links = stagehand.page.query_selector_all("h2:has-text('2025') + div li a")
+    links = page.query_selector_all("h2:has-text('2025') + div li a")
 
     results = []
     for link in links:
