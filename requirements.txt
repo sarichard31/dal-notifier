@@ -10,7 +10,7 @@ six @ file:///AppleInternal/Library/BuildRoots/bcce998f-ff34-11ef-9d34-f2a857e00
 urllib3==1.26.4
 stagehand-py
 browserbase
-supabase-py
+supabase
 openai
 python-dotenv
 rich
