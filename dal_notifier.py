@@ -4,7 +4,7 @@ import openai
 import supabase
 from bs4 import BeautifulSoup
 from supabase import create_client
-from stagehand import Browser
+from stagehand import Stagehand
 
 # Load environment variables
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
@@ -31,18 +31,18 @@ def update_last_seen_url(new_url):
     supabase_client.table("dal_tracker").update({"last_url": new_url}).eq("id", 1).execute()
 
 def get_latest_dal_url():
-    browser = Browser()
-    browser.goto(DAL_LIST_URL)
-    link = browser.get_attribute("a[href*='dear_administrator_letters']", "href", index=0)
+    stagehand = Stagehand()
+    stagehand.goto(DAL_LIST_URL)
+    link = stagehand.get_attribute("a[href*='dear_administrator_letters']", "href", index=0)
     full_url = f"https://www.health.ny.gov{link}" if link.startswith("/") else link
-    browser.close()
+    stagehand.close()
     return full_url
 
 def extract_text_from_dal(url):
-    browser = Browser()
-    browser.goto(url)
-    text = browser.get_text("body")  # You can refine this selector
-    browser.close()
+    stagehand = Stagehand()
+    stagehand.goto(url)
+    text = Stagehand.get_text("body")  # You can refine this selector
+    stagehand.close()
     return text.strip()
 
 def summarize_text(text):
