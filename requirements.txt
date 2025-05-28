@@ -1,12 +1,13 @@
-altgraph @ file:///AppleInternal/Library/BuildRoots/bcce998f-ff34-11ef-9d34-f2a857e00a32/Library/Caches/com.apple.xbs/Sources/python3/altgraph-0.17.2-py2.py3-none-any.whl
+altgraph==0.17.2
 certifi==2020.12.5
 chardet==4.0.0
-fast @ git+ssh://git@github.com/fast-af/fast-cli.git@38aaba445e7451f8bdd68ab3bb6aad00bcdc103c
-future @ file:///AppleInternal/Library/BuildRoots/bcce998f-ff34-11ef-9d34-f2a857e00a32/Library/Caches/com.apple.xbs/Sources/python3/future-0.18.2-py3-none-any.whl
+# fast-cli is not on PyPI, so remove or pin only if needed via git+https
+# fast @ git+https://github.com/fast-af/fast-cli.git@38aaba445e7451f8bdd68ab3bb6aad00bcdc103c
+future==0.18.2
 idna==2.10
-macholib @ file:///AppleInternal/Library/BuildRoots/bcce998f-ff34-11ef-9d34-f2a857e00a32/Library/Caches/com.apple.xbs/Sources/python3/macholib-1.15.2-py2.py3-none-any.whl
+macholib==1.15.2
 requests==2.25.1
-six @ file:///AppleInternal/Library/BuildRoots/bcce998f-ff34-11ef-9d34-f2a857e00a32/Library/Caches/com.apple.xbs/Sources/python3/six-1.15.0-py2.py3-none-any.whl
+six==1.15.0
 urllib3==1.26.4
 stagehand-py
 browserbase
