@@ -32,7 +32,8 @@ def update_last_seen_url(new_url):
 
 def get_latest_dal_url():
     stagehand = Stagehand()
-    stagehand.goto(DAL_LIST_URL)
+    page = stagehand.page
+    page.goto(DAL_LIST_URL)
     link = stagehand.get_attribute("a[href*='dear_administrator_letters']", "href", index=0)
     full_url = f"https://www.health.ny.gov{link}" if link.startswith("/") else link
     stagehand.close()
